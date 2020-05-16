@@ -31,7 +31,7 @@ export class TestData {
             title: 'Залить бензин полный бак', 
             completed: false, 
             priority: TestData.priorities[2], 
-            category: TestData.categories[10], 
+            category: TestData.categories[9], 
             date: new Date('2020-04-19')
         },
 
@@ -75,7 +75,7 @@ export class TestData {
             title: 'Сходить на семинар по программированию', 
             completed: true, 
             priority: TestData.priorities[2], 
-            category: TestData.categories[10], 
+            category: TestData.categories[2], 
             date: new Date('2020-04-19')
         },
 
