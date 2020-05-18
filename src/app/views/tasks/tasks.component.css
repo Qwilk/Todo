@@ -1,0 +1,16 @@
+.table > tbody > tr > td {
+    padding: 12px;
+}
+
+.form-check .form-check-input:checked~.form-check-sign .check {
+    background: #fb9208;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #797979;
+}
+
+.novalue {
+    color: #b7b7b7;
+}
