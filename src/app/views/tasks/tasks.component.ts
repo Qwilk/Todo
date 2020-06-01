@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { Task } from 'src/app/model/task.model';
 import { DataHandlerService } from 'src/app/service/data-handler.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -10,30 +10,30 @@ import { MatPaginator } from '@angular/material/paginator';
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.css']
 })
-export class TasksComponent implements OnInit, AfterViewInit {
-
-  public tasks: Task[];
+export class TasksComponent implements OnInit {
 
   public displayedColumns: string[] = ['color', 'id', 'title', 'category', 'priority', 'date'];
   public dataSource: MatTableDataSource<Task>;
 
-  @ViewChild(MatSort, {static: false}) private sort: MatSort;
-  @ViewChild(MatPaginator, {static: false}) private paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) private sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) private paginator: MatPaginator;
+
+  public tasks: Task[];
+
+  @Input('tasks')
+  set setTasks(tasks: Task[]) {
+    this.tasks = tasks;
+    this.fillTable();
+  }
+
+  @Output()
+  public selectTask = new EventEmitter<Task>()
 
   constructor(private dataHandler: DataHandlerService) { }
 
   public ngOnInit(): void {
-    this.dataHandler.tasksSubject.subscribe(
-      tasks => this.tasks = tasks,
-      err => console.error(err)
-    );
-
     this.dataSource = new MatTableDataSource();
-    this.refreshTable();
-  }
-
-  public ngAfterViewInit(): void {
-    this.addTableObjects();
+    this.fillTable();
   }
 
   public toggleTaskCompleted(task: Task): void {
@@ -52,12 +52,14 @@ export class TasksComponent implements OnInit, AfterViewInit {
     return '#fff';
   }
 
-  private refreshTable() : void {
+  private fillTable(): void {
+    if (!this.dataSource) return; 
+
     this.dataSource.data = this.tasks;
     this.addTableObjects();
 
     this.dataSource.sortingDataAccessor = (task, colName) => {
-      switch(colName) {
+      switch (colName) {
         case 'priority': return task.priority ? task.priority.id : null;
         case 'category': return task.category ? task.category.title : null;
         case 'date': return task.date ? task.date.toString() : null; // TODO: исправить сортировку даты
@@ -69,5 +71,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
   private addTableObjects(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+  }
+
+  public showTask(task: Task): void {
+    this.selectTask.emit(task);
   }
 }

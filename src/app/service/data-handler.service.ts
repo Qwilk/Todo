@@ -1,29 +1,30 @@
+import { CategoryDAOArray } from './../data/dao/impl/CategoryDAOArray';
+import { Observable } from 'rxjs';
+import { TaskDAOArray } from './../data/dao/impl/TaskDAOArray';
 import { Injectable } from '@angular/core';
-import { Category } from '../model/category.model';
-import { TestData } from '../data/test-data';
 import { Task } from '../model/task.model';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Category } from '../model/category.model';
+import { Priority } from '../model/priority.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataHandlerService {
 
-  tasksSubject = new BehaviorSubject<Task[]>(TestData.tasks);
-  categoriesSubject = new BehaviorSubject<Category[]>(TestData.categories);
+  private TaskDAOArray = new TaskDAOArray();
+  private CategoryDAOArray = new CategoryDAOArray();
 
   constructor() { }
 
-  public getCategories(): Category[] {
-    return TestData.categories;
+  public getAllTasks(): Observable<Task[]> {
+    return this.TaskDAOArray.getAll();
   }
 
-  public fillTask(): void {
-    this.tasksSubject.next(TestData.tasks);
+  public getAllCategories(): Observable<Category[]> {
+    return this.CategoryDAOArray.getAll();
   }
 
-  public fillTaskByCategory(category: Category): void {
-    const tasks = TestData.tasks.filter(task => task.category === category);
-    this.tasksSubject.next(tasks);
+  public searchTasks(searchText: string, category: Category, priorety: Priority, status: boolean): Observable<Task[]> {
+    return this.TaskDAOArray.search(searchText, category, priorety, status);
   }
 }
